@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Center, HStack, Pressable, Icon, Text } from "native-base";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { ComponentNames } from "./../../App";
 
 interface iNavbarItem {
     selectedNo: number;
@@ -51,28 +52,28 @@ export const Navbar = () => {
     const [selected, setSelected] = useState(1);
     const navBarItemsArray: iNavbarItem[] = [
         {
-            title: "Home",
+            title: ComponentNames.Home,
             icon: "home",
             selected,
             setSelected,
             selectedNo: 1,
         },
         {
-            title: "Search",
+            title: ComponentNames.Search,
             icon: "view-list",
             selected,
             setSelected,
             selectedNo: 2,
         },
         {
-            title: "Create",
+            title: ComponentNames.Create,
             icon: "plus",
             selected,
             setSelected,
             selectedNo: 3,
         },
         {
-            title: "Account",
+            title: ComponentNames.Account,
             icon: "account",
             selected,
             setSelected,
