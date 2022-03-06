@@ -8,24 +8,35 @@ import {
     Button,
 } from "native-base";
 import { Auth } from "aws-amplify";
+import { useState } from "react";
+
+interface iSignUpFormData {
+    username: string;
+    password: string;
+    confirmPassword: string;
+}
 
 export const SignUpForm = () => {
-    // async function signUp() {
-    //     try {
-    //         const { user } = await Auth.signUp({
-    //             username,
-    //             password,
-    //             attributes: {
-    //                 email,          // optional
-    //                 phone_number,   // optional - E.164 number convention
-    //                 // other custom attributes
-    //             }
-    //         });
-    //         console.log(user);
-    //     } catch (error) {
-    //         console.log('error signing up:', error);
-    //     }
-    // }
+    const [formData, setFormData] = useState<iSignUpFormData>({
+        username: "",
+        password: "",
+        confirmPassword: "",
+    });
+    async function onSubmit() {
+        try {
+            console.log("formData :>> ", formData);
+            const { user } = await Auth.signUp({
+                username: "formData.username",
+                password: formData.password,
+                attributes: {
+                    email: formData.username,
+                },
+            });
+            console.log("user", user);
+        } catch (error) {
+            console.log("error signing up:", error);
+        }
+    }
     return (
         <Center w="100%">
             <Box safeArea p="2" w="90%" maxW="290" py="8">
@@ -51,19 +62,36 @@ export const SignUpForm = () => {
                     Sign up to continue!
                 </Heading>
                 <VStack space={3} mt="5">
-                    <FormControl>
+                    <FormControl isRequired>
                         <FormControl.Label>Email</FormControl.Label>
-                        <Input />
+                        <Input
+                            onChangeText={(value: string) =>
+                                setFormData({ ...formData, username: value })
+                            }
+                        />
                     </FormControl>
-                    <FormControl>
+                    <FormControl isRequired>
                         <FormControl.Label>Password</FormControl.Label>
-                        <Input type="password" />
+                        <Input
+                            type="password"
+                            onChangeText={(value: string) =>
+                                setFormData({ ...formData, password: value })
+                            }
+                        />
                     </FormControl>
-                    <FormControl>
+                    <FormControl isRequired>
                         <FormControl.Label>Confirm Password</FormControl.Label>
-                        <Input type="password" />
+                        <Input
+                            type="password"
+                            onChangeText={(value: string) =>
+                                setFormData({
+                                    ...formData,
+                                    confirmPassword: value,
+                                })
+                            }
+                        />
                     </FormControl>
-                    <Button mt="2" colorScheme="indigo">
+                    <Button onPress={onSubmit} mt="2" colorScheme="indigo">
                         Sign up
                     </Button>
                 </VStack>
