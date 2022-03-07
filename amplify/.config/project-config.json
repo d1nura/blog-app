@@ -2,12 +2,16 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "ampblog",
+  "projectName": "blogapp",
   "version": "3.1",
-  "frontend": "android",
-  "android": {
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "react-native",
     "config": {
-      "ResDir": "app/src/main/res"
+      "SourceDir": "src",
+      "DistributionDir": "/",
+      "BuildCommand": "npm run-script build",
+      "StartCommand": "npm run-script start"
     }
   }
 }

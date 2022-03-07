@@ -29,7 +29,9 @@ export const SignUpForm = () => {
                 username: "formData.username",
                 password: formData.password,
                 attributes: {
-                    email: formData.username,
+                    preferred_username: "dsf",
+                    email: "dsf@dsf.coom",
+                    name: "name",
                 },
             });
             console.log("user", user);

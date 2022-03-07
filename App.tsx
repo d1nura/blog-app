@@ -7,7 +7,9 @@ import { Account } from "./src/components/Account";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Search } from "./src/components/Search";
 import Amplify, { Auth } from "aws-amplify";
-import awsconfig from "./aws-exports";
+import awsconfig from "./src/aws-exports";
+
+Amplify.configure(awsconfig);
 
 const HeaderTitle = () => {
     return (
@@ -25,8 +27,6 @@ export enum ComponentNames {
 }
 
 export default function App() {
-    Amplify.configure(awsconfig);
-    Auth.configure(awsconfig);
     const Tab = createBottomTabNavigator();
     return (
         <NativeBaseProvider>
