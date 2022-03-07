@@ -7,11 +7,12 @@
       "customAuth": false,
       "frontendAuthConfig": {
         "socialProviders": [],
-        "usernameAttributes": [],
-        "signupAttributes": [
-          "PREFERRED_USERNAME",
-          "NAME",
+        "usernameAttributes": [
           "EMAIL"
+        ],
+        "signupAttributes": [
+          "EMAIL",
+          "NICKNAME"
         ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,

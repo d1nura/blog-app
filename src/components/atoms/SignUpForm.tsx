@@ -26,12 +26,11 @@ export const SignUpForm = () => {
         try {
             console.log("formData :>> ", formData);
             const { user } = await Auth.signUp({
-                username: "formData.username",
-                password: formData.password,
+                username: "one@one.com",
+                password: "D1nur@5991",
                 attributes: {
-                    preferred_username: "dsf",
-                    email: "dsf@dsf.coom",
-                    name: "name",
+                    email: "one@one.com",
+                    nickname: "name",
                 },
             });
             console.log("user", user);

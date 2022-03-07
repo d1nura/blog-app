@@ -3,7 +3,7 @@
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "blogap758fa1a7",
+    "resourceNameTruncated": "blogap4c960d3f",
     "userPoolName": "blogapp",
     "autoVerifiedAttributes": [
       "email"
@@ -25,21 +25,23 @@
       "Requires Uppercase"
     ],
     "requiredAttributes": [
-      "preferred_username",
-      "name",
-      "email"
+      "email",
+      "nickname"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "blogap758fa1a7_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "blogap4c960d3f_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "758fa1a7",
+    "sharedId": "4c960d3f",
     "resourceName": "blogapp",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",
+    "usernameAttributes": [
+      "email"
+    ],
     "useDefault": "manual",
     "userPoolGroups": false,
     "userPoolGroupList": [],
