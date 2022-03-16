@@ -9,33 +9,38 @@ import {
 } from "native-base";
 import { Auth } from "aws-amplify";
 import { useState } from "react";
+import { ToastAndroid } from "react-native";
 
 interface iSignUpFormData {
     username: string;
     password: string;
-    confirmPassword: string;
+    nickname: string;
 }
 
 export const SignUpForm = () => {
     const [formData, setFormData] = useState<iSignUpFormData>({
         username: "",
         password: "",
-        confirmPassword: "",
+        nickname: "",
     });
     async function onSubmit() {
         try {
             console.log("formData :>> ", formData);
             const { user } = await Auth.signUp({
-                username: "one@one.com",
-                password: "D1nur@5991",
+                username: formData.username,
+                password: formData.password,
                 attributes: {
-                    email: "one@one.com",
-                    nickname: "name",
+                    email: formData.username,
+                    nickname: formData.nickname,
                 },
             });
             console.log("user", user);
         } catch (error) {
             console.log("error signing up:", error);
+            return ToastAndroid.show(
+                "A pikachu appeared nearby !",
+                ToastAndroid.SHORT
+            );
         }
     }
     return (
@@ -66,8 +71,21 @@ export const SignUpForm = () => {
                     <FormControl isRequired>
                         <FormControl.Label>Email</FormControl.Label>
                         <Input
+                            type="email"
                             onChangeText={(value: string) =>
                                 setFormData({ ...formData, username: value })
+                            }
+                        />
+                    </FormControl>
+                    <FormControl isRequired>
+                        <FormControl.Label>Nickname</FormControl.Label>
+                        <Input
+                            type="text"
+                            onChangeText={(value: string) =>
+                                setFormData({
+                                    ...formData,
+                                    nickname: value,
+                                })
                             }
                         />
                     </FormControl>
@@ -80,18 +98,7 @@ export const SignUpForm = () => {
                             }
                         />
                     </FormControl>
-                    <FormControl isRequired>
-                        <FormControl.Label>Confirm Password</FormControl.Label>
-                        <Input
-                            type="password"
-                            onChangeText={(value: string) =>
-                                setFormData({
-                                    ...formData,
-                                    confirmPassword: value,
-                                })
-                            }
-                        />
-                    </FormControl>
+
                     <Button onPress={onSubmit} mt="2" colorScheme="indigo">
                         Sign up
                     </Button>
