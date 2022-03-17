@@ -1,6 +1,5 @@
 import { FormControl, Input, WarningOutlineIcon } from "native-base";
-import React, { useState } from "react";
-import * as yup from "yup";
+import React from "react";
 
 export const FormItem = ({
     label,
@@ -15,9 +14,8 @@ export const FormItem = ({
     onChange: (text: string) => void;
     isRequired?: boolean;
     isInvalid?: boolean;
-    errorMessage?: string;
+    errorMessage?: string | string[];
 }) => {
-    // console.log("first", isInvalid, errorMessage);
     return (
         <FormControl isRequired isInvalid={isInvalid}>
             <FormControl.Label>{label}</FormControl.Label>
@@ -27,11 +25,24 @@ export const FormItem = ({
                     onChange(value);
                 }}
             />
-            <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-                {errorMessage ?? ""}
-            </FormControl.ErrorMessage>
+            {errorMessage && Array.isArray(errorMessage) ? (
+                errorMessage.map((message, key) => {
+                    return (
+                        <FormControl.ErrorMessage
+                            key={`${message}+${key}`}
+                            leftIcon={<WarningOutlineIcon size="xs" />}
+                        >
+                            {message}
+                        </FormControl.ErrorMessage>
+                    );
+                })
+            ) : (
+                <FormControl.ErrorMessage
+                    leftIcon={<WarningOutlineIcon size="xs" />}
+                >
+                    {errorMessage ?? ""}
+                </FormControl.ErrorMessage>
+            )}
         </FormControl>
     );
 };

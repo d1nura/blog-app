@@ -11,9 +11,15 @@ import { Auth } from "aws-amplify";
 import { useEffect, useState } from "react";
 import { ToastAndroid } from "react-native";
 import { FormItem } from "../molecules/FormItem";
-import * as yup from "yup";
-
+import {
+    isFieldEmpty,
+    isSpecialCharsThere,
+    isValidEmail,
+    isValidLength,
+    isValidPassword,
+} from "../FormValidations/validations";
 import validator from "validator";
+
 interface iSignUpFormData {
     username: string;
     password: string;
@@ -22,87 +28,139 @@ interface iSignUpFormData {
 
 export const SignUpForm = () => {
     const [formData, setFormData] = useState<iSignUpFormData>({
-        username: "",
         password: "",
         nickname: "",
-    });
-    let schema = yup.object().shape({
-        password: yup
-            .string()
-            .matches(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-            ),
-        nickname: yup.string().min(4).max(10),
-        username: yup.string(),
-        // .required("Mail is required")
-        // .test(
-        //     "is-valid",
-        //     (message) => `${message.path} is invalid`,
-        //     (value) => {
-        //         return true;
-        //         // return value
-        //         //     ? validator.isEmail(value)
-        //         //     : new yup.ValidationError("Invalid value");
-        //     }
-        // ),
+        username: "",
     });
 
-    const [formError, setFormError] = useState<{
-        [index: string]: { isInvalid: boolean | string; message: string };
+    const [errorList, setErrorList] = useState<{
+        username: string;
+        nickname: string;
+        password: string[] | string;
     }>({
-        username: { isInvalid: false, message: "" },
-        nickname: { isInvalid: false, message: "" },
-        password: { isInvalid: false, message: "" },
+        username: "",
+        nickname: "",
+        password: "",
     });
+
+    const validateNickname = (value: string) => {
+        setErrorList({ ...errorList, nickname: "" });
+
+        if (isSpecialCharsThere(value)) {
+            setErrorList({
+                ...errorList,
+                nickname: "Speacial characters not allowed",
+            });
+            return false;
+        } else if (!isValidLength(value)) {
+            setErrorList({
+                ...errorList,
+                nickname: "Character length should be between 2 and 10",
+            });
+            return false;
+        }
+        return true;
+    };
+
+    const validateUsername = (value: string) => {
+        setErrorList({ ...errorList, username: "" });
+
+        if (!isValidEmail(value)) {
+            setErrorList({
+                ...errorList,
+                username: "Should be a valid email",
+            });
+            return false;
+        }
+        return true;
+    };
+
+    const validatePassword = (value: string) => {
+        setErrorList({ ...errorList, password: "" });
+
+        const [
+            lowerCaseLetterPresent,
+            upperCaseLetterPresent,
+            numberPresent,
+            specialLetterPresent,
+            validLength,
+        ] = isValidPassword(value);
+
+        if (
+            !lowerCaseLetterPresent ||
+            !upperCaseLetterPresent ||
+            !numberPresent ||
+            !specialLetterPresent ||
+            !validLength
+        ) {
+            setErrorList({
+                ...errorList,
+                password: [
+                    !validLength ? "Min length 8 & Max length 10" : "",
+                    !lowerCaseLetterPresent
+                        ? "Atleast one Lowercase letter"
+                        : "",
+                    !upperCaseLetterPresent
+                        ? "Atleast one  Uppercase letter"
+                        : "",
+                    !numberPresent ? "Atleast one number" : "",
+                    !specialLetterPresent
+                        ? "Atleast one speacial character"
+                        : "",
+                ],
+            });
+            return false;
+        }
+        return true;
+    };
+
+    const validate = (formData: any) => {
+        for (const formDataItem in formData) {
+            if (isFieldEmpty(formData[formDataItem])) {
+                setErrorList((p) => {
+                    return {
+                        ...p,
+                        [formDataItem]: "Please enter a value",
+                    };
+                });
+                return false;
+            } else {
+                if (formDataItem === "username") {
+                    return validateUsername(formData[formDataItem]);
+                } else if (formDataItem === "nickname") {
+                    return validateNickname(formData[formDataItem]);
+                } else if (formDataItem === "password") {
+                    return validatePassword(formData[formDataItem]);
+                }
+                // return true;
+            }
+        }
+    };
 
     async function onSubmit() {
-        setFormError({
-            username: { isInvalid: false, message: "" },
-            nickname: { isInvalid: false, message: "" },
-            password: { isInvalid: false, message: "" },
-        });
-        schema
-            .validate({
-                ...formData,
-            })
-            .then(async function (valid) {
-                console.log("this runs :>> ", valid);
-                if (valid) {
-                    // setErrorList({ ...errorList, ...initialErrorListValues });
-                    try {
-                        console.log("formData :>> ", formData);
-                        // const { user } = await Auth.signUp({
-                        //     username: formData.username,
-                        //     password: formData.password,
-                        //     attributes: {
-                        //         email: formData.username,
-                        //         nickname: formData.nickname,
-                        //     },
-                        // });
-                        // console.log("user", user);
-                    } catch (error) {
-                        console.log("error signing up:", error);
-                        return ToastAndroid.show(
-                            "A pikachu appeared nearby !",
-                            ToastAndroid.SHORT
-                        );
-                    }
-                } else {
-                    console.log("errr");
-                }
-            })
-            .catch((err) => {
-                console.log("err", err, err.name, err.errors, err.path);
-                setFormError({
-                    ...formError,
-                    [err.path]: { isInvalid: true, message: err.errors },
-                });
-            });
-    }
+        // setErrorList({ ...errorList, ...initialErrorListValues });
+        try {
+            validate(formData);
 
-    useEffect(() => {
-        console.log("erorList", formError);
-    }, [formError]);
+            console.log("object :>> ", validate(formData));
+            // console.log("formData :>> ", formData);
+            // const { user } = await Auth.signUp({
+            //     username: formData.username,
+            //     password: formData.password,
+            //     attributes: {
+            //         email: formData.username,
+            //         nickname: formData.nickname,
+            //     },
+            // });
+            // console.log("user", user);
+        } catch (error) {
+            // console.log("error signing up:", error);
+            return ToastAndroid.show(
+                "A pikachu appeared nearby !",
+                ToastAndroid.SHORT
+            );
+        }
+    }
 
     return (
         <Center w="100%">
@@ -135,28 +193,35 @@ export const SignUpForm = () => {
                         label="Email"
                         onChange={(value) => {
                             setFormData({ ...formData, username: value });
+                            validateUsername(value);
                         }}
-                        isInvalid={formError["username"].isInvalid as boolean}
-                        errorMessage={formError["username"].message}
+                        isInvalid={errorList["username"] !== ""}
+                        errorMessage={errorList["username"]}
                     />
                     <FormItem
                         isRequired
                         inputType="text"
                         label="Nickname"
-                        onChange={(value) =>
+                        onChange={(value) => {
                             setFormData({
                                 ...formData,
                                 nickname: value,
-                            })
-                        }
+                            });
+                            validateNickname(value);
+                        }}
+                        isInvalid={errorList["nickname"] !== ""}
+                        errorMessage={errorList["nickname"]}
                     />
                     <FormItem
                         isRequired
                         inputType="password"
                         label="Password"
-                        onChange={(value) =>
-                            setFormData({ ...formData, password: value })
-                        }
+                        onChange={(value) => {
+                            setFormData({ ...formData, password: value });
+                            validatePassword(value);
+                        }}
+                        isInvalid={errorList["password"] !== ""}
+                        errorMessage={errorList["password"]}
                     />
 
                     <Button onPress={onSubmit} mt="2" colorScheme="indigo">
