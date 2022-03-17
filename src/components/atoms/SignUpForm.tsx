@@ -18,7 +18,6 @@ import {
     isValidLength,
     isValidPassword,
 } from "../FormValidations/validations";
-import validator from "validator";
 
 interface iSignUpFormData {
     username: string;
@@ -43,6 +42,8 @@ export const SignUpForm = () => {
         password: "",
     });
 
+    const [isSignUpLoading, setIsSignUpLoading] = useState(false);
+
     const validateNickname = (value: string) => {
         setErrorList({ ...errorList, nickname: "" });
 
@@ -51,15 +52,13 @@ export const SignUpForm = () => {
                 ...errorList,
                 nickname: "Speacial characters not allowed",
             });
-            return false;
         } else if (!isValidLength(value)) {
             setErrorList({
                 ...errorList,
                 nickname: "Character length should be between 2 and 10",
             });
-            return false;
         }
-        return true;
+        // return true;
     };
 
     const validateUsername = (value: string) => {
@@ -70,9 +69,8 @@ export const SignUpForm = () => {
                 ...errorList,
                 username: "Should be a valid email",
             });
-            return false;
         }
-        return true;
+        // return true;
     };
 
     const validatePassword = (value: string) => {
@@ -109,9 +107,8 @@ export const SignUpForm = () => {
                         : "",
                 ],
             });
-            return false;
         }
-        return true;
+        // return true;
     };
 
     const validate = (formData: any) => {
@@ -123,42 +120,43 @@ export const SignUpForm = () => {
                         [formDataItem]: "Please enter a value",
                     };
                 });
-                return false;
             } else {
                 if (formDataItem === "username") {
-                    return validateUsername(formData[formDataItem]);
+                    validateUsername(formData[formDataItem]);
                 } else if (formDataItem === "nickname") {
-                    return validateNickname(formData[formDataItem]);
+                    validateNickname(formData[formDataItem]);
                 } else if (formDataItem === "password") {
-                    return validatePassword(formData[formDataItem]);
+                    validatePassword(formData[formDataItem]);
                 }
-                // return true;
             }
         }
+
+        return Object.keys(errorList).map((key: string) =>
+            (errorList as any)[key] === "" ? true : false
+        );
     };
 
     async function onSubmit() {
-        // setErrorList({ ...errorList, ...initialErrorListValues });
-        try {
-            validate(formData);
-
-            console.log("object :>> ", validate(formData));
-            // console.log("formData :>> ", formData);
-            // const { user } = await Auth.signUp({
-            //     username: formData.username,
-            //     password: formData.password,
-            //     attributes: {
-            //         email: formData.username,
-            //         nickname: formData.nickname,
-            //     },
-            // });
-            // console.log("user", user);
-        } catch (error) {
-            // console.log("error signing up:", error);
-            return ToastAndroid.show(
-                "A pikachu appeared nearby !",
-                ToastAndroid.SHORT
-            );
+        if (validate(formData).findIndex((item) => !item) === -1) {
+            setIsSignUpLoading(true);
+            try {
+                // console.log("object :>> ", validate(formData));
+                // console.log("formData :>> ", formData);
+                const { user } = await Auth.signUp({
+                    username: formData.username,
+                    password: formData.password,
+                    attributes: {
+                        email: formData.username,
+                        nickname: formData.nickname,
+                    },
+                });
+                console.log("user", user);
+                setIsSignUpLoading(false);
+            } catch (error: any) {
+                console.log("error signing up:", error.message);
+                setIsSignUpLoading(false);
+                return ToastAndroid.show(error.message, ToastAndroid.TOP);
+            }
         }
     }
 
@@ -224,7 +222,12 @@ export const SignUpForm = () => {
                         errorMessage={errorList["password"]}
                     />
 
-                    <Button onPress={onSubmit} mt="2" colorScheme="indigo">
+                    <Button
+                        isLoading={isSignUpLoading}
+                        onPress={onSubmit}
+                        mt="2"
+                        colorScheme="indigo"
+                    >
                         Sign up
                     </Button>
                 </VStack>
