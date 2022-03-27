@@ -1,4 +1,4 @@
-import { NativeBaseProvider, Center, Box } from "native-base";
+import { NativeBaseProvider } from "native-base";
 import { StyleSheet, Text, View } from "react-native";
 import { Navbar } from "./src/components/Navbar";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,6 +8,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Search } from "./src/components/Search";
 import Amplify, { Auth } from "aws-amplify";
 import awsconfig from "./src/aws-exports";
+import { AccountScreenNames, ComponentNames } from "./src/navigationRoutes";
+import { SignUpForm } from "./src/components/Pages/Authentication/SignUpForm";
+import { ConfirmSignUpForm } from "./src/components/Pages/Authentication/ConfirmSignUpForm";
 
 Amplify.configure(awsconfig);
 
@@ -18,13 +21,6 @@ const HeaderTitle = () => {
         </View>
     );
 };
-
-export enum ComponentNames {
-    Account = "Account",
-    Home = "Home",
-    Search = "Search",
-    Create = "Create",
-}
 
 export default function App() {
     const Tab = createBottomTabNavigator();
@@ -58,7 +54,6 @@ export default function App() {
                             }}
                         />
                     </Tab.Navigator>
-
                     <Navbar />
                 </View>
             </NavigationContainer>

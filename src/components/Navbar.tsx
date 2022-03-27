@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Center, HStack, Pressable, Icon, Text } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { ComponentNames } from "./../../App";
+import { ComponentNames } from "../navigationRoutes";
 
 interface iNavbarItem {
     selectedNo: number;

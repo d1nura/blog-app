@@ -8,16 +8,24 @@ import {
     Button,
 } from "native-base";
 import { Auth } from "aws-amplify";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ToastAndroid } from "react-native";
-import { FormItem } from "../molecules/FormItem";
+import { FormItem } from "../../molecules/FormItem";
 import {
     isFieldEmpty,
     isSpecialCharsThere,
     isValidEmail,
     isValidLength,
     isValidPassword,
-} from "../FormValidations/validations";
+} from "../../FormValidations/validations";
+import {
+    CommonActions,
+    NavigatorScreenParams,
+    useNavigation,
+    useRoute,
+} from "@react-navigation/native";
+import { AccountScreenNames, ComponentNames } from "../../../navigationRoutes";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 interface iSignUpFormData {
     username: string;
@@ -32,6 +40,19 @@ export const SignUpForm = () => {
         username: "",
     });
 
+    //     BottomTabScreenProps<
+    //     {
+    //         Account: NavigatorScreenParams<{
+    //             SignUp: undefined;
+    //             ConfirmSignUp: undefined;
+    //         }>;
+    //         Home: undefined;
+    //         Search: undefined;
+    //         Create: undefined;
+    //     },
+    //     "Account"
+    // >
+    const navigation = useNavigation();
     const [errorList, setErrorList] = useState<{
         username: string;
         nickname: string;
@@ -41,7 +62,6 @@ export const SignUpForm = () => {
         nickname: "",
         password: "",
     });
-
     const [isSignUpLoading, setIsSignUpLoading] = useState(false);
 
     const validateNickname = (value: string) => {
@@ -152,6 +172,13 @@ export const SignUpForm = () => {
                 });
                 console.log("user", user);
                 setIsSignUpLoading(false);
+                if (user) {
+                    navigation.dispatch(
+                        CommonActions.navigate({
+                            name: AccountScreenNames.ConfirmSignUpForm,
+                        })
+                    );
+                }
             } catch (error: any) {
                 console.log("error signing up:", error.message);
                 setIsSignUpLoading(false);
@@ -229,6 +256,63 @@ export const SignUpForm = () => {
                         colorScheme="indigo"
                     >
                         Sign up
+                    </Button>
+                    <Button
+                        onPress={() => {
+                            navigation.dispatch(
+                                CommonActions.navigate({
+                                    name: AccountScreenNames.ConfirmSignUpForm,
+                                })
+                            );
+                        }}
+                        mt="2"
+                        colorScheme="red"
+                    >
+                        Navigate
+                    </Button>
+
+                    <Button
+                        onPress={async () => {
+                            try {
+                                await Auth.confirmSignUp(
+                                    "ddakshitha1@gmail.com",
+                                    "835505"
+                                );
+                            } catch (error) {
+                                console.log("error confirming sign up", error);
+                            }
+                        }}
+                        mt="2"
+                        colorScheme="indigo"
+                    >
+                        Confirm
+                    </Button>
+                    <Button
+                        onPress={() => {
+                            Auth.currentSession()
+                                .then((data) => console.log(data))
+                                .catch((err) => console.log(err));
+                        }}
+                        mt="2"
+                        colorScheme="indigo"
+                    >
+                        Recover
+                    </Button>
+                    <Button
+                        onPress={async () => {
+                            try {
+                                const user = await Auth.signIn(
+                                    "ddakshitha1@gmail.com",
+                                    "D1nur@5991"
+                                );
+                            } catch (error) {
+                                console.log("error signing in", error);
+                            }
+                        }}
+                        mt="2"
+                        colorScheme="indigo"
+                    >
+                        Log in
                     </Button>
                 </VStack>
             </Box>

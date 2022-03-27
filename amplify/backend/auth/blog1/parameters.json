@@ -1,0 +1,29 @@
+{
+  "authSelections": "userPoolOnly",
+  "resourceName": "blog1",
+  "serviceType": "imported",
+  "region": "ap-south-1",
+  "usernameAttributes": [
+    "phone_number"
+  ],
+  "requiredAttributes": [
+    "nickname",
+    "email",
+    "phone_number"
+  ],
+  "passwordPolicyMinLength": 8,
+  "passwordPolicyCharacters": [
+    "Requires Lowercase",
+    "Requires Uppercase",
+    "Requires Numbers",
+    "Requires Symbols"
+  ],
+  "mfaConfiguration": "ON",
+  "autoVerifiedAttributes": [
+    "phone_number"
+  ],
+  "mfaTypes": [
+    "SMS Text Message",
+    "TOTP"
+  ]
+}

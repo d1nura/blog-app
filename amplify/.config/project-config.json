@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "blogapp",
+  "projectName": "blog1",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {
